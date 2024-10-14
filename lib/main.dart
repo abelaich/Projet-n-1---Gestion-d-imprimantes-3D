@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:project_n1/Repository/printer_repository_dummy_impl.dart';
+import 'package:project_n1/repository/printer_repository.dart';
 
 void main() {
+  GetIt.instance.registerSingleton<PrinterRepository>(PrinterRepositoryDummyImpl() as PrinterRepository);
   runApp(const MyApp());
 }
 
@@ -57,3 +61,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
