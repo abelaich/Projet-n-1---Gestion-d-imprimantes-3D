@@ -4,8 +4,18 @@ import 'package:project_n1/repository/printer_repository.dart';
 import 'package:project_n1/data/product.dart';
 import 'product_widget.dart';
 
-class StockWidget extends StatelessWidget {
+class StockWidget extends StatefulWidget {
   const StockWidget({super.key});
+
+  @override
+  State<StockWidget> createState() => _StockWidgetState() ;
+}
+
+class _StockWidgetState extends State < StockWidget > {
+  // Variables pour les filtres
+  bool filterById = false;
+  bool filterByType = false;
+  bool filterByDate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -13,29 +23,18 @@ class StockWidget extends StatelessWidget {
     final printRepository = GetIt.instance<PrinterRepository>();
     final List<Product> products = printRepository.getProducts();
 
-    // Variables pour les filtres
-    bool filterById = false;
-    bool filterByType = false;
-    bool filterByDate = false;
+    bool ascendingOrder = true;
 
     // Appliquer les filtres
     List<Product> applyFilters() {
       List<Product> filteredProducts = products;
 
-      // Filtrer par identifiant
       if (filterById) {
-        filteredProducts = filteredProducts.where((product) => product.id == 0).toList();
-      }
-
-      // Filtrer par type
-      if (filterByType) {
-        filteredProducts = filteredProducts.where((product) => product.title == 'Wire').toList();
-      }
-
-      // Filtrer par date
-      if (filterByDate) {
-        final cutoffDate = DateTime(2024, 01, 01);
-        filteredProducts = filteredProducts.where((product) => product.date.isBefore(cutoffDate)).toList();
+        filteredProducts.sort((a, b) => ascendingOrder ? a.id.compareTo(b.id) : b.id.compareTo(a.id));
+      } else if (filterByType) {
+        filteredProducts.sort((a, b) => ascendingOrder ? a.title.compareTo(b.title) : b.title.compareTo(a.title));
+      } else if (filterByDate) {
+        filteredProducts.sort((a, b) => ascendingOrder ? a.date.compareTo(b.date) : b.date.compareTo(a.date));
       }
 
       return filteredProducts;
@@ -55,49 +54,35 @@ class StockWidget extends StatelessWidget {
             child: Row(
               children: [
                 // Checkbox pour filtrer par ID
-                ValueListenableBuilder<bool>(
-                  valueListenable: ValueNotifier(filterById),
-                  builder: (context, value, child) {
-                    return Checkbox(
-                      value: value,
+                Checkbox(
+                      value: filterById,
                       activeColor: Colors.green,
                       onChanged: (bool? newValue) {
-                        filterById = newValue!;
-                      },
-                    );
-                  },
-                ),
-                const Text("ID"),
+                        setState (() {
+                          filterById = newValue!;
+                        });
+                      }),
+                const Expanded ( child : Text ("ID") ),
 
-                // Checkbox pour filtrer par type
-                ValueListenableBuilder<bool>(
-                  valueListenable: ValueNotifier(filterByType),
-                  builder: (context, value, child) {
-                    return Checkbox(
-                      value: value,
-                      activeColor: Colors.green,
-                      onChanged: (bool? newValue) {
-                        filterByType = newValue!;
-                      },
-                    );
-                  },
-                ),
-                const Text("Type"),
+                Checkbox(
+                        value: filterByType,
+                        activeColor: Colors.green,
+                        onChanged: (bool? newValue) {
+                          setState (() {
+                            filterByType = newValue!;
+                          });
+                        }),
+                const Expanded ( child : Text ("TYPE") ),
 
-                // Checkbox pour filtrer par date
-                ValueListenableBuilder<bool>(
-                  valueListenable: ValueNotifier(filterByDate),
-                  builder: (context, value, child) {
-                    return Checkbox(
-                      value: value,
-                      activeColor: Colors.green,
-                      onChanged: (bool? newValue) {
+                Checkbox(
+                    value: filterByDate,
+                    activeColor: Colors.green,
+                    onChanged: (bool? newValue) {
+                      setState (() {
                         filterByDate = newValue!;
-                      },
-                    );
-                  },
-                ),
-                const Text("Date"),
+                      });
+                    }),
+                const Expanded ( child : Text ("Date") ),
               ],
             ),
           ),
