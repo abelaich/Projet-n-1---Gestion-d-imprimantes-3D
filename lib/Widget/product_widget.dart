@@ -12,13 +12,12 @@ class ProductWidget extends StatelessWidget {
       padding : const EdgeInsets .all (16.0) ,
       child: Row(
         children : [
+
+          Expanded(child: Image.asset(product.image)),
+          const SizedBox ( width : 16) ,
           Expanded ( child : Text (product.title) ),
-          const SizedBox ( width : 16) , // espace horizontal de 16 dp
-          Expanded ( child : Image.network(product.image)),
-          const SizedBox ( width : 16) , // espace horizontal de 16 dp
+          const SizedBox ( width : 16) ,
           Expanded ( child : Text('ID: ${product.id}\nDate: ${product.date.toLocal().toString().split(' ')[0]}') ),
-          const SizedBox ( width : 16) , // espace horizontal de 16 dp
-          Expanded ( child : Image.network(product.image)),
         ]
       ),
     );
