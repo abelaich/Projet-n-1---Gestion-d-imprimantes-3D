@@ -3,15 +3,16 @@ import 'package:get_it/get_it.dart';
 import 'package:project_n1/repository/printer_repository.dart';
 import 'package:project_n1/data/product.dart';
 import 'product_widget.dart';
+import 'printer_detail_widget.dart';
 
 class StockWidget extends StatefulWidget {
   const StockWidget({super.key});
 
   @override
-  State<StockWidget> createState() => _StockWidgetState() ;
+  State<StockWidget> createState() => _StockWidgetState();
 }
 
-class _StockWidgetState extends State < StockWidget > {
+class _StockWidgetState extends State<StockWidget> {
   // Variables pour les filtres
   bool filterById = false;
   bool filterByType = false;
@@ -19,23 +20,34 @@ class _StockWidgetState extends State < StockWidget > {
 
   @override
   Widget build(BuildContext context) {
-
     final printRepository = GetIt.instance<PrinterRepository>();
     final List<Product> products = printRepository.getProducts();
 
-    bool ascendingOrder = true;
-
     // Appliquer les filtres
     List<Product> applyFilters() {
-      List<Product> filteredProducts = products;
+      List<Product> filteredProducts = List.from(products);
 
-      if (filterById) {
-        filteredProducts.sort((a, b) => ascendingOrder ? a.id.compareTo(b.id) : b.id.compareTo(a.id));
-      } else if (filterByType) {
-        filteredProducts.sort((a, b) => ascendingOrder ? a.title.compareTo(b.title) : b.title.compareTo(a.title));
-      } else if (filterByDate) {
-        filteredProducts.sort((a, b) => ascendingOrder ? a.date.compareTo(b.date) : b.date.compareTo(a.date));
-      }
+      // Tri en fonction des filtres sélectionnés
+      filteredProducts.sort((a, b) {
+        // Comparer par ID
+        if (filterById) {
+          int idComparison = a.id.compareTo(b.id);
+          if (idComparison != 0) return idComparison; // Si les IDs sont différents, on retourne le résultat
+        }
+
+        // Comparer par Type
+        if (filterByType) {
+          int typeComparison = a.title.compareTo(b.title);
+          if (typeComparison != 0) return typeComparison; // Si les titres sont différents, on retourne le résultat
+        }
+
+        // Comparer par Date
+        if (filterByDate) {
+          return a.date.compareTo(b.date); // Retourner la comparaison de dates
+        }
+
+        return 0; // Si tous les critères sont identiques
+      });
 
       return filteredProducts;
     }
@@ -55,34 +67,32 @@ class _StockWidgetState extends State < StockWidget > {
               children: [
                 // Checkbox pour filtrer par ID
                 Checkbox(
-                      value: filterById,
-                      activeColor: Colors.green,
-                      onChanged: (bool? newValue) {
-                        setState (() {
-                          filterById = newValue!;
-                        });
-                      }),
-                const Expanded ( child : Text ("ID") ),
-
+                  value: filterById,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      filterById = newValue!;
+                    });
+                  },
+                ),
+                const Expanded(child: Text("ID")),
                 Checkbox(
-                        value: filterByType,
-                        activeColor: Colors.green,
-                        onChanged: (bool? newValue) {
-                          setState (() {
-                            filterByType = newValue!;
-                          });
-                        }),
-                const Expanded ( child : Text ("TYPE") ),
-
+                  value: filterByType,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      filterByType = newValue!;
+                    });
+                  },
+                ),
+                const Expanded(child: Text("TYPE")),
                 Checkbox(
-                    value: filterByDate,
-                    activeColor: Colors.green,
-                    onChanged: (bool? newValue) {
-                      setState (() {
-                        filterByDate = newValue!;
-                      });
-                    }),
-                const Expanded ( child : Text ("Date") ),
+                  value: filterByDate,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      filterByDate = newValue!;
+                    });
+                  },
+                ),
+                const Expanded(child: Text("Date")),
               ],
             ),
           ),
@@ -93,7 +103,20 @@ class _StockWidgetState extends State < StockWidget > {
             child: ListView.builder(
               itemCount: filteredProducts.length,
               itemBuilder: (BuildContext context, int index) {
-                return ProductWidget(product: filteredProducts[index]);
+                final product = filteredProducts[index];
+
+                return GestureDetector(
+                  onTap: () {
+                    // Naviguer vers l'écran de détails de l'imprimante
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PrinterDetailWidget(product: product),
+                      ),
+                    );
+                  },
+                  child: ProductWidget(product: product),
+                );
               },
             ),
           ),
