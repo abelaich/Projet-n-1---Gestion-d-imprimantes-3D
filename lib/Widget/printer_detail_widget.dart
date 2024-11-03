@@ -51,20 +51,24 @@ class PrinterDetailWidget extends StatelessWidget {
             ),
 
             TextFormField(
-              initialValue: product.date.toLocal().toString().split(' ')[0],
+              readOnly: true, // Prevents keyboard from showing
               decoration: const InputDecoration(labelText: 'Service Date'),
+              controller: TextEditingController(text: product.date.toLocal().toString().split(' ')[0]), // Initialize with current date
               onTap: () async {
                 final selectedDate = await showDatePicker(
                   context: context,
                   initialDate: product.date,
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
+                  firstDate: DateTime(1161),  //the first printer ever made
+                  lastDate: DateTime.now(),
                 );
                 if (selectedDate != null) {
                   stockPresenter.setProductDate(product, selectedDate); // Updates the date
+                  // You may want to set the text controller to the new date to reflect the change
+                  // You may need to use a stateful widget for this
                 }
               },
             ),
+
           ],
         ),
       ),
