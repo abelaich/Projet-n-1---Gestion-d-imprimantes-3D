@@ -18,18 +18,23 @@ class StockPresenterImpl extends StockPresenter {
   @override
   void setProductType(Product product, String newType) {
     product.title = newType;
+    GetIt.instance<PrinterRepository>().updateProduct(product);
     notifyListeners();
   }
 
   @override
   void setProductId(Product product, int newId) {
     product.id = newId;
+    GetIt.instance<PrinterRepository>().updateProduct(product);
     notifyListeners();
   }
 
   @override
   void setProductDate(Product product, DateTime newDate) {
     product.date = newDate;
+    GetIt.instance<PrinterRepository>().updateProduct(product);
     notifyListeners();
   }
 }
+
+

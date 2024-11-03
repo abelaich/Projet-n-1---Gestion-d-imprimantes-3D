@@ -20,6 +20,19 @@ class PrinterDetailWidget extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            TextFormField(
+              initialValue: '${product.id}',
+              decoration: const InputDecoration(labelText: 'Identification Number'),
+              keyboardType: TextInputType.number,
+              onChanged: (text) {
+                try {
+                  stockPresenter.setProductId(product, int.parse(text)); // Updates the ID
+                } on FormatException {
+                  // Handle error if needed
+                }
+              },
+            ),
+
             DropdownButton<String>(
               value: product.title,
               items: <String>['Powder printer', 'Wire printer', 'Resin printer']
@@ -31,24 +44,11 @@ class PrinterDetailWidget extends StatelessWidget {
               }).toList(),
               onChanged: (String? newValue) {
                 if (newValue != null) {
-                  stockPresenter.setProductType(product, newValue);
+                  stockPresenter.setProductType(product, newValue); // Updates the type
                 }
               },
             ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: '${product.id}',
-              decoration: const InputDecoration(labelText: 'Identification Number'),
-              keyboardType: TextInputType.number,
-              onChanged: (text) {
-                try {
-                  stockPresenter.setProductId(product, int.parse(text));
-                } on FormatException {
-                  // Handle error if needed
-                }
-              },
-            ),
-            const SizedBox(height: 16),
+
             TextFormField(
               initialValue: product.date.toLocal().toString().split(' ')[0],
               decoration: const InputDecoration(labelText: 'Service Date'),
@@ -60,7 +60,7 @@ class PrinterDetailWidget extends StatelessWidget {
                   lastDate: DateTime(2100),
                 );
                 if (selectedDate != null) {
-                  stockPresenter.setProductDate(product, selectedDate);
+                  stockPresenter.setProductDate(product, selectedDate); // Updates the date
                 }
               },
             ),

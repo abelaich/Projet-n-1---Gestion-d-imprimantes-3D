@@ -1,8 +1,8 @@
 class Product {
-  late final int id;
-  final String image;
-  late final String title;
-  late final DateTime date;
+  int id; // No need for 'late', since it's required during construction
+  String image;
+  String title; // Mark as final if it should not change
+  DateTime date; // Mark as final if it should not change
 
   Product({
     required this.id,

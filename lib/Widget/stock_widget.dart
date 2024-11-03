@@ -4,6 +4,9 @@ import 'package:project_n1/repository/printer_repository.dart';
 import 'package:project_n1/data/product.dart';
 import 'package:project_n1/widget/product_widget.dart';
 import 'package:project_n1/widget/printer_detail_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../presenter/stock_presenter.dart';
 
 class StockWidget extends StatefulWidget {
   const StockWidget({super.key});
@@ -13,35 +16,34 @@ class StockWidget extends StatefulWidget {
 }
 
 class _StockWidgetState extends State<StockWidget> {
-  // Variables pour les filtres
   bool filterById = false;
   bool filterByType = false;
   bool filterByDate = false;
 
   @override
   Widget build(BuildContext context) {
-    final printRepository = GetIt.instance<PrinterRepository>();
-    final List<Product> products = printRepository.getProducts();
+    final stockPresenter = context.watch<StockPresenter>(); // Watch the presenter for updates
+    final List<Product> products = stockPresenter.products; // Get the updated products
 
-    // Appliquer les filtres
+    // Apply filters
     List<Product> applyFilters() {
       List<Product> filteredProducts = List.from(products);
 
-      // Tri en fonction des filtres sélectionnés
+      // Sorting logic based on filters
       filteredProducts.sort((a, b) {
-        // Comparer par ID
+        // Compare by ID
         if (filterById) {
           int idComparison = a.id.compareTo(b.id);
           if (idComparison != 0) return idComparison;
         }
 
-        // Comparer par Type
+        // Compare by Type
         if (filterByType) {
           int typeComparison = a.title.compareTo(b.title);
           if (typeComparison != 0) return typeComparison;
         }
 
-        // Comparer par Date
+        // Compare by Date
         if (filterByDate) {
           return a.date.compareTo(b.date);
         }
@@ -101,11 +103,8 @@ class _StockWidgetState extends State<StockWidget> {
               itemBuilder: (BuildContext context, int index) {
                 final product = filteredProducts[index];
 
-                // In the itemBuilder of ListView.builder in StockWidget
-                // In the itemBuilder of ListView.builder in StockWidget
                 return GestureDetector(
                   onTap: () {
-                    // Navigate directly to PrinterDetailWidget and pass the product
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -115,7 +114,6 @@ class _StockWidgetState extends State<StockWidget> {
                   },
                   child: ProductWidget(product: product),
                 );
-
               },
             ),
           ),
