@@ -27,12 +27,20 @@ class PrinterDetailWidget extends StatelessWidget {
               keyboardType: TextInputType.number,
               onChanged: (text) {
                 try {
-                  stockPresenter.setProductId(product, int.parse(text)); // Updates the ID
+                  final newId = int.parse(text);
+                  stockPresenter.setProductId(product, newId, (errorMessage) {
+                    // Show the snackbar with the error message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(errorMessage)),
+                    );
+                  }); // Updates the ID
                 } on FormatException {
                   // Handle error if needed
                 }
               },
             ),
+
+
 
             DropdownButton<String>(
               value: product.title,

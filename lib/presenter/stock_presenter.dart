@@ -7,7 +7,7 @@ abstract class StockPresenter extends ChangeNotifier {
   List<Product> get products;
 
   void setProductType(Product product, String newType);
-  void setProductId(Product product, int newId);
+  void setProductId(Product product, int newId, Function(String) onError);
   void setProductDate(Product product, DateTime newDate);
 }
 
@@ -41,11 +41,22 @@ class StockPresenterImpl extends StockPresenter {
   }
 
   @override
-  void setProductId(Product product, int newId) {
-    product.id = newId;
-    GetIt.instance<PrinterRepository>().updateProduct(product);
-    notifyListeners();
+  void setProductId(Product product, int newId, Function(String) onError){
+    final printerRepository = GetIt.instance<PrinterRepository>();
+
+    // Check for uniqueness
+    if (!printerRepository.getProducts().any((p) => p.id == newId)) {
+      product.id = newId;
+      printerRepository.updateProduct(product);
+      notifyListeners();
+    } else {
+      // Notify the user about the duplicate ID
+      onError('ID $newId is already in use. Please choose another ID.');
+
+    }
   }
+
+
 
   @override
   void setProductDate(Product product, DateTime newDate) {
