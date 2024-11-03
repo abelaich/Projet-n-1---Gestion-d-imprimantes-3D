@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:project_n1/presenter/stock_presenter.dart';
 
 class PrinterDetailWidget extends StatelessWidget {
-  final Product product; // Add this line to accept product as an argument
+  final Product product;
 
   const PrinterDetailWidget({super.key, required this.product});
 
@@ -20,6 +20,7 @@ class PrinterDetailWidget extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Image widget that updates based on product type
             TextFormField(
               initialValue: '${product.id}',
               decoration: const InputDecoration(labelText: 'Identification Number'),
