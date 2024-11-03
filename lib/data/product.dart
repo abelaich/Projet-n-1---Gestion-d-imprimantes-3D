@@ -1,8 +1,8 @@
 class Product {
-  final int id;
+  late final int id;
   final String image;
-  final String title;
-  final DateTime date;
+  late final String title;
+  late final DateTime date;
 
   Product({
     required this.id,

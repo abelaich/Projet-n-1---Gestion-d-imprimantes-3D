@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:project_n1/repository/printer_repository.dart';
 import 'package:project_n1/data/product.dart';
-import 'product_widget.dart';
-import 'printer_detail_widget.dart';
+import 'package:project_n1/widget/product_widget.dart';
+import 'package:project_n1/widget/printer_detail_widget.dart';
 
 class StockWidget extends StatefulWidget {
   const StockWidget({super.key});
@@ -32,27 +32,26 @@ class _StockWidgetState extends State<StockWidget> {
         // Comparer par ID
         if (filterById) {
           int idComparison = a.id.compareTo(b.id);
-          if (idComparison != 0) return idComparison; // Si les IDs sont différents, on retourne le résultat
+          if (idComparison != 0) return idComparison;
         }
 
         // Comparer par Type
         if (filterByType) {
           int typeComparison = a.title.compareTo(b.title);
-          if (typeComparison != 0) return typeComparison; // Si les titres sont différents, on retourne le résultat
+          if (typeComparison != 0) return typeComparison;
         }
 
         // Comparer par Date
         if (filterByDate) {
-          return a.date.compareTo(b.date); // Retourner la comparaison de dates
+          return a.date.compareTo(b.date);
         }
 
-        return 0; // Si tous les critères sont identiques
+        return 0;
       });
 
       return filteredProducts;
     }
 
-    // Obtenir les produits filtrés
     List<Product> filteredProducts = applyFilters();
 
     return Scaffold(
@@ -65,7 +64,6 @@ class _StockWidgetState extends State<StockWidget> {
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                // Checkbox pour filtrer par ID
                 Checkbox(
                   value: filterById,
                   onChanged: (bool? newValue) {
@@ -97,17 +95,17 @@ class _StockWidgetState extends State<StockWidget> {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Affichage de la liste filtrée
           Expanded(
             child: ListView.builder(
               itemCount: filteredProducts.length,
               itemBuilder: (BuildContext context, int index) {
                 final product = filteredProducts[index];
 
+                // In the itemBuilder of ListView.builder in StockWidget
+                // In the itemBuilder of ListView.builder in StockWidget
                 return GestureDetector(
                   onTap: () {
-                    // Naviguer vers l'écran de détails de l'imprimante
+                    // Navigate directly to PrinterDetailWidget and pass the product
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -117,6 +115,7 @@ class _StockWidgetState extends State<StockWidget> {
                   },
                   child: ProductWidget(product: product),
                 );
+
               },
             ),
           ),
