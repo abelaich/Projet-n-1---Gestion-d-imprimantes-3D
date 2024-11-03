@@ -1,9 +1,11 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:project_n1/data/product.dart';
 import 'package:provider/provider.dart';
 import 'package:project_n1/presenter/stock_presenter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:project_n1/resources/app_colors.dart';
 
 class PrinterDetailWidget extends StatefulWidget {
   final Product product;
@@ -43,78 +45,138 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Identification Number
-            TextFormField(
-              initialValue: '${widget.product.id}',
-              decoration: const InputDecoration(labelText: 'Identification Number'),
-              keyboardType: TextInputType.number,
-              onChanged: (text) {
-                if (text.isNotEmpty) {
-                  try {
-                    final newId = int.parse(text);
-                    stockPresenter.setProductId(widget.product, newId, (errorMessage) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(errorMessage)),
-                      );
-                    });
-                  } on FormatException {
-                    // Handle format error if needed
-                  }
-                }
-              },
-            ),
+
 
             // Dropdown for printer type
-            DropdownButton<String>(
-              value: widget.product.title,
-              items: <String>['Powder printer', 'Wire printer', 'Resin printer']
-                  .map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  stockPresenter.setProductType(widget.product, newValue);
-                }
-              },
+            SizedBox(
+              width: double.infinity,
+              child: DropdownButton<String>(
+                value: widget.product.title,
+                isExpanded: true,
+                dropdownColor: AppColors.secondaryColor, // Dropdown background color
+                items: <String>['Powder printer', 'Wire printer', 'Resin printer']
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text('Type : $value'), // Dropdown text color
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    stockPresenter.setProductType(widget.product, newValue);
+                  }
+                },
+                underline: Container(
+                  height: 0.6,
+                  color: AppColors.primaryColor, // Underline color
+                ),
+              ),
             ),
 
-            // Service Date
-            TextFormField(
-              readOnly: true,
-              decoration: const InputDecoration(labelText: 'Service Date'),
-              controller: _dateController,
-              onTap: () async {
-                final selectedDate = await showDatePicker(
-                  context: context,
-                  initialDate: widget.product.date,
-                  firstDate: DateTime(2000),  // Changed to a more reasonable first date
-                  lastDate: DateTime.now(),
-                );
-                if (selectedDate != null) {
-                  stockPresenter.setProductDate(widget.product, selectedDate);
-                  _dateController.text = selectedDate.toLocal().toString().split(' ')[0];
-                }
-              },
+            const SizedBox(height:20), // Space of 20 pixels
+
+            // Identification Number
+            SizedBox(
+              width: double.infinity,
+              child: TextFormField(
+                initialValue: '${widget.product.id}',
+                decoration: const InputDecoration(
+                  labelText: 'Identification Number',
+                  labelStyle: TextStyle(color: AppColors.primaryColor), // Label color
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                onChanged: (text) {
+                  if (text.isNotEmpty) {
+                    try {
+                      final newId = int.parse(text);
+                      stockPresenter.setProductId(widget.product, newId, (errorMessage) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(errorMessage)),
+                        );
+                      });
+                    } on FormatException {
+                      // Error handling for invalid format
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Invalid ID format")),
+                      );
+                    }
+                  }
+                },
+              ),
             ),
+
+            const SizedBox(height:30), // Space of 30 pixels
+            // Service Date
+            SizedBox(
+              width: double.infinity,
+              child: TextFormField(
+                readOnly: true,
+                decoration: const InputDecoration(
+                  labelText: 'Service Date',
+                  labelStyle: TextStyle(color: AppColors.primaryColor), // Label color
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryColor), // Border color when enabled
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryColor), // Border color when focused
+                  ),
+                ),
+                controller: _dateController,
+                onTap: () async {
+                  final selectedDate = await showDatePicker(
+                    context: context,
+                    initialDate: widget.product.date,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime.now(),
+                    builder: (BuildContext context, Widget? child) {
+                      return Theme(
+                        data: ThemeData.light().copyWith(
+                          primaryColor: AppColors.primaryColor, // Header color
+                          hintColor: AppColors.secondaryColor, // Selected color
+                          colorScheme: const ColorScheme.light(primary: AppColors.primaryColor), // Color scheme for light mode
+                          buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary), // Button theme
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (selectedDate != null) {
+                    stockPresenter.setProductDate(widget.product, selectedDate);
+                    _dateController.text = selectedDate.toLocal().toString().split(' ')[0];
+                  }
+                },
+              ),
+            ),
+
 
             // Schedule Maintenance Button
-            ElevatedButton(
-              onPressed: () async {
-                // Request calendar permission
-                PermissionStatus status = await _requestCalendarPermission();
+            Padding(
+              padding: const EdgeInsets.only(top: 40), // Adjust padding to move it lower
+              child: SizedBox(
+                width: 200,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: AppColors.primaryColor, // Button text color
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero, // Square corners
+                    ),
+                  ),
+                  onPressed: () async {
+                    // Request calendar permission
+                    PermissionStatus status = await _requestCalendarPermission();
 
-                if (status.isGranted) {
-                  scheduleMaintenance(context, widget.product);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Calendar permission denied')),
-                  );
-                }
-              },
-              child: const Text('Schedule Maintenance'),
+                    if (status.isGranted) {
+                      scheduleMaintenance(context, widget.product);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Calendar permission denied')),
+                      );
+                    }
+                  },
+                  child: const Text('Schedule Maintenance'),
+                ),
+              ),
             ),
           ],
         ),
@@ -166,7 +228,6 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
     });
     print('Event Details: Title: $title, Start: $startDateTime, End: $endDateTime');
   }
-
 
   DateTime _getNextMonday() {
     DateTime now = DateTime.now();

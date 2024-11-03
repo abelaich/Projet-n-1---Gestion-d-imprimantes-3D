@@ -11,26 +11,30 @@ class Product {
     required this.image,
   });
 
-  // Factory constructor to create a Product with the correct image
+  static String getImageForType(String title) {
+    switch (title) {
+      case 'Powder printer':
+        return 'assets/images/powder-printer.png';
+      case 'Wire printer':
+        return 'assets/images/wire-printer.png';
+      case 'Resin printer':
+        return 'assets/images/resin-printer.png';
+      default:
+        return ''; // Default image
+    }
+  }
+
+  // Factory constructor with automatic image assignment
   factory Product.withImage({
     required int id,
     required String title,
     required DateTime date,
   }) {
-    String image;
-    switch (title) {
-      case 'Powder printer':
-        image = 'assets/images/powder-printer.png';
-        break;
-      case 'Wire printer':
-        image = 'assets/images/wire-printer.png';
-        break;
-      case 'Resin printer':
-        image = 'assets/images/resin-printer.png';
-        break;
-      default:
-        image = ''; // Default image
-    }
-    return Product(id: id, title: title, date: date, image: image);
+    return Product(
+      id: id,
+      title: title,
+      date: date,
+      image: getImageForType(title),
+    );
   }
 }

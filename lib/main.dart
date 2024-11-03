@@ -5,6 +5,7 @@ import 'package:project_n1/repository/printer_repository.dart';
 import 'package:project_n1/widget/stock_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:project_n1/presenter/stock_presenter.dart';
+import 'package:project_n1/resources/app_colors.dart';
 
 void main() {
   GetIt.instance.registerSingleton<PrinterRepository>(PrinterRepositoryDummyImpl());
@@ -21,9 +22,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: '3D Printers',
+      theme: ThemeData(
+        primaryColor: AppColors.primaryColor,
+        scaffoldBackgroundColor: AppColors.secondaryColor, // Corps blanc
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.secondaryColor,
+          titleTextStyle: TextStyle(
+            color: AppColors.primaryColor,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       home: const StockWidget(), // Directly set the home widget
     );
   }

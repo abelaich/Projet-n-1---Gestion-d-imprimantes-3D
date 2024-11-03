@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:project_n1/repository/printer_repository.dart';
 import 'package:project_n1/data/product.dart';
 import 'package:project_n1/widget/product_widget.dart';
 import 'package:project_n1/widget/printer_detail_widget.dart';
 import 'package:provider/provider.dart';
-
+import 'package:project_n1/resources/app_colors.dart';
 import '../presenter/stock_presenter.dart';
 
 class StockWidget extends StatefulWidget {
@@ -22,28 +20,23 @@ class _StockWidgetState extends State<StockWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final stockPresenter = context.watch<StockPresenter>(); // Watch the presenter for updates
-    final List<Product> products = stockPresenter.products; // Get the updated products
+    final stockPresenter = context.watch<StockPresenter>();
+    final List<Product> products = stockPresenter.products;
 
-    // Apply filters
     List<Product> applyFilters() {
       List<Product> filteredProducts = List.from(products);
 
-      // Sorting logic based on filters
       filteredProducts.sort((a, b) {
-        // Compare by ID
         if (filterById) {
           int idComparison = a.id.compareTo(b.id);
           if (idComparison != 0) return idComparison;
         }
 
-        // Compare by Type
         if (filterByType) {
           int typeComparison = a.title.compareTo(b.title);
           if (typeComparison != 0) return typeComparison;
         }
 
-        // Compare by Date
         if (filterByDate) {
           return a.date.compareTo(b.date);
         }
@@ -58,44 +51,19 @@ class _StockWidgetState extends State<StockWidget> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("3D Printer"),
+        title: const Text(
+          "3D Printer",
+          style: TextStyle(
+            fontSize: 32, // Augmente la taille de la police
+            color: AppColors.primaryColor, // Texte noir pour le contraste sur fond blanc
+          ),
+        ),
+        centerTitle: true, // Centre le titre dans l'AppBar
+        backgroundColor: AppColors.secondaryColor, // Fond blanc pour l'AppBar
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Checkbox(
-                  value: filterById,
-                  onChanged: (bool? newValue) {
-                    setState(() {
-                      filterById = newValue!;
-                    });
-                  },
-                ),
-                const Expanded(child: Text("ID")),
-                Checkbox(
-                  value: filterByType,
-                  onChanged: (bool? newValue) {
-                    setState(() {
-                      filterByType = newValue!;
-                    });
-                  },
-                ),
-                const Expanded(child: Text("TYPE")),
-                Checkbox(
-                  value: filterByDate,
-                  onChanged: (bool? newValue) {
-                    setState(() {
-                      filterByDate = newValue!;
-                    });
-                  },
-                ),
-                const Expanded(child: Text("Date")),
-              ],
-            ),
-          ),
+          _buildFilterOptions(),
           const SizedBox(height: 16),
           Expanded(
             child: ListView.builder(
@@ -119,6 +87,69 @@ class _StockWidgetState extends State<StockWidget> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFilterOptions() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Card(
+        elevation: 4,
+        color: AppColors.secondaryColor,
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildFilterOption('ID', filterById, (bool? newValue) {
+                setState(() {
+                  filterById = newValue!;
+                });
+              }),
+              _buildFilterOption('TYPE', filterByType, (bool? newValue) {
+                setState(() {
+                  filterByType = newValue!;
+                });
+              }),
+              _buildFilterOption('DATE', filterByDate, (bool? newValue) {
+                setState(() {
+                  filterByDate = newValue!;
+                });
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterOption(String label, bool value, ValueChanged<bool?> onChanged) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Checkbox(
+          value: value,
+          onChanged: onChanged,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          checkColor: AppColors.secondaryColor,
+          fillColor: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.selected)) {
+              return AppColors.primaryColor;
+            }
+            return AppColors.secondaryColor;
+          }),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColors.primaryColor,
+          ),
+        ),
+      ],
     );
   }
 }
