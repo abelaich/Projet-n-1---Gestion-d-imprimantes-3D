@@ -9,6 +9,7 @@ import 'package:project_n1/resources/app_colors.dart';
 
 void main() {
   GetIt.instance.registerSingleton<PrinterRepository>(PrinterRepositoryDummyImpl());
+
   runApp(
     ChangeNotifierProvider<StockPresenter>(
       create: (context) => StockPresenterImpl(),
@@ -23,20 +24,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, // Hiding the debug banner
       theme: ThemeData(
-        primaryColor: AppColors.primaryColor,
-        scaffoldBackgroundColor: AppColors.secondaryColor, // Corps blanc
+        primaryColor: AppColors.primaryColor,               // Primary color for the app
+        scaffoldBackgroundColor: AppColors.secondaryColor,  // Background color for the scaffold
         appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.secondaryColor,
+          backgroundColor: AppColors.secondaryColor,        // AppBar background color
           titleTextStyle: TextStyle(
-            color: AppColors.primaryColor,
-            fontSize: 24,
+            color: AppColors.primaryColor,                  // Text color for the AppBar title
+            fontSize: 24,                                   // Font size for the title
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      home: const StockWidget(), // Directly set the home widget
+      home: const StockWidget(), // Setting StockWidget as the home screen
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'printer_repository.dart';
 import 'package:project_n1/data/product.dart';
 
+
 class PrinterRepositoryDummyImpl implements PrinterRepository {
 
   final List<Product> _products = [
@@ -33,16 +34,19 @@ class PrinterRepositoryDummyImpl implements PrinterRepository {
 
   @override
   List<Product> getProducts() {
+    // Handing over the list of products
     return _products;
   }
 
   @override
   void updateProduct(Product product) {
+    // Find the index of the product we want to update
     final index = _products.indexWhere((p) => p.id == product.id);
     if (index != -1) {
+      // If we found it, we update it!
       _products[index] = product;
     } else {
-      // Handle if product does not exist (optional)
+      // In case if it doesn't exist, we add it
       _products.add(product);
     }
   }

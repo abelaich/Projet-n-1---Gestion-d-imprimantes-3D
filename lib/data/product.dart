@@ -1,8 +1,8 @@
 class Product {
-  int id;
-  String title;
-  DateTime date;
-  String image;
+  int id;         // Unique identifier for the product
+  String title;   // Title of the printer
+  DateTime date;  // Start date
+  String image;   // Path to the product's image, because a picture is worth a thousand lines of code!
 
   Product({
     required this.id,
@@ -11,6 +11,7 @@ class Product {
     required this.image,
   });
 
+  // Returns the image path based on the printer type
   static String getImageForType(String title) {
     switch (title) {
       case 'Powder printer':
@@ -20,11 +21,11 @@ class Product {
       case 'Resin printer':
         return 'assets/images/resin-printer.png';
       default:
-        return ''; // Default image
+        return ''; // Empty image, for those printer types that might exist!
     }
   }
 
-  // Factory constructor with automatic image assignment
+  // Factory constructor that creates a Product and assigns the image automatically
   factory Product.withImage({
     required int id,
     required String title,
@@ -34,7 +35,7 @@ class Product {
       id: id,
       title: title,
       date: date,
-      image: getImageForType(title),
+      image: getImageForType(title), // The image is now on autopilot
     );
   }
 }

@@ -22,6 +22,7 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
   @override
   void initState() {
     super.initState();
+    // Initialize the date controller with the product's date
     _dateController = TextEditingController(
       text: widget.product.date.toLocal().toString().split(' ')[0],
     );
@@ -29,6 +30,7 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
 
   @override
   void dispose() {
+    // Dispose of the date controller
     _dateController.dispose();
     super.dispose();
   }
@@ -46,19 +48,18 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
         child: Column(
           children: [
 
-
-            // Dropdown for printer type
+            // Dropdown for selecting type
             SizedBox(
               width: double.infinity,
               child: DropdownButton<String>(
                 value: widget.product.title,
                 isExpanded: true,
-                dropdownColor: AppColors.secondaryColor, // Dropdown background color
+                dropdownColor: AppColors.secondaryColor,  // Dropdown background color
                 items: <String>['Powder printer', 'Wire printer', 'Resin printer']
                     .map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text('Type : $value'), // Dropdown text color
+                    child: Text('Type : $value'),         //label
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -75,7 +76,7 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
 
             const SizedBox(height:20), // Space of 20 pixels
 
-            // Identification Number
+            // Text field for ID
             SizedBox(
               width: double.infinity,
               child: TextFormField(
@@ -85,7 +86,7 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
                   labelStyle: TextStyle(color: AppColors.primaryColor), // Label color
                 ),
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly], // Only allow digits
                 onChanged: (text) {
                   if (text.isNotEmpty) {
                     try {
@@ -107,11 +108,12 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
             ),
 
             const SizedBox(height:30), // Space of 30 pixels
-            // Service Date
+
+            // Start Date text field
             SizedBox(
               width: double.infinity,
               child: TextFormField(
-                readOnly: true,
+                readOnly: true, // This field should not be editable with keyboard
                 decoration: const InputDecoration(
                   labelText: 'Service Date',
                   labelStyle: TextStyle(color: AppColors.primaryColor), // Label color
@@ -124,17 +126,18 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
                 ),
                 controller: _dateController,
                 onTap: () async {
+                  // Show date picker when the field is tapped
                   final selectedDate = await showDatePicker(
                     context: context,
                     initialDate: widget.product.date,
-                    firstDate: DateTime(2000),
+                    firstDate: DateTime(1830), //The very first mechanical printer was invented by Charles Babbage in the 19th century, around the 1830s
                     lastDate: DateTime.now(),
                     builder: (BuildContext context, Widget? child) {
                       return Theme(
                         data: ThemeData.light().copyWith(
                           primaryColor: AppColors.primaryColor, // Header color
                           hintColor: AppColors.secondaryColor, // Selected color
-                          colorScheme: const ColorScheme.light(primary: AppColors.primaryColor), // Color scheme for light mode
+                          colorScheme: const ColorScheme.light(primary: AppColors.primaryColor), // Light mode color scheme
                           buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary), // Button theme
                         ),
                         child: child!,
@@ -149,21 +152,20 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
               ),
             ),
 
-
             // Schedule Maintenance Button
             Padding(
               padding: const EdgeInsets.only(top: 40), // Adjust padding to move it lower
               child: SizedBox(
-                width: 200,
+                width: 200, // Set a fixed width for the button
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white, backgroundColor: AppColors.primaryColor, // Button text color
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero, // Square corners
+                      borderRadius: BorderRadius.zero, // Square corners for a bold look
                     ),
                   ),
                   onPressed: () async {
-                    // Request calendar permission
+                    // Request calendar permission before scheduling
                     PermissionStatus status = await _requestCalendarPermission();
 
                     if (status.isGranted) {
@@ -174,7 +176,7 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
                       );
                     }
                   },
-                  child: const Text('Schedule Maintenance'),
+                  child: const Text('Schedule Maintenance'), // Button label
                 ),
               ),
             ),
@@ -188,9 +190,56 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
     PermissionStatus permission = await Permission.calendar.status;
 
     if (permission == PermissionStatus.denied) {
+      // If denied, request AGAIN permission
       permission = await Permission.calendar.request();
+
       if (permission != PermissionStatus.granted) {
-        return Future.error('Calendar permissions are denied');
+        // If denied, request AGAIN and AGAIN permission
+        permission = await Permission.calendar.request();
+
+        if (permission != PermissionStatus.granted) {
+          // If denied, request AGAIN and AGAIN and AGAIN permission
+          permission = await Permission.calendar.request();
+
+          if (permission != PermissionStatus.granted) {
+            // If denied, request AGAIN and AGAIN and AGAIN and AGAIN permission
+            permission = await Permission.calendar.request();
+
+            if (permission != PermissionStatus.granted) {
+              // If denied, request AGAIN and AGAIN and AGAIN and AGAIN and AGAIN permission
+              permission = await Permission.calendar.request();
+
+              if (permission != PermissionStatus.granted) {
+                // If denied, request AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN permission
+                permission = await Permission.calendar.request();
+
+                if (permission != PermissionStatus.granted) {
+                  // If denied, request AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN permission
+                  permission = await Permission.calendar.request();
+
+                  if (permission != PermissionStatus.granted) {
+                    // If denied, request AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN permission
+                    permission = await Permission.calendar.request();
+
+                    if (permission != PermissionStatus.granted) {
+                      // If denied, request AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN permission
+                      permission = await Permission.calendar.request();
+
+                      if (permission != PermissionStatus.granted) {
+                        // If denied, request AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN permission
+                        permission = await Permission.calendar.request();
+
+                        if (permission != PermissionStatus.granted) {
+                          return Future.error('Calendar permissions are denied after AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN and AGAIN attempts');
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
 
@@ -202,21 +251,21 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
   }
 
   void scheduleMaintenance(BuildContext context, Product product) {
-    DateTime nextMonday = _getNextMonday();
+    DateTime nextMonday = _getNextMonday(); // Get the date of next Monday
     // Set the time to 8 AM next Monday
     DateTime startDateTime = DateTime(nextMonday.year, nextMonday.month, nextMonday.day, 8, 0);
     DateTime endDateTime = startDateTime.add(const Duration(hours: 4)); // Set for four hour duration
 
-    String title = '${product.title} #${product.id}';
+    String title = '${product.title} #${product.id}'; // Event title
     final event = Event(
       title: title,
-      description: 'Revision',
+      description: 'Revision', // A reminder that this is important stuff
       startDate: startDateTime,
       endDate: endDateTime,
-      iosParams: const IOSParams(reminder: Duration(minutes: 40)),
-      androidParams: const AndroidParams(emailInvites: []),
+      iosParams: const IOSParams(reminder: Duration(minutes: 40)), // Reminder for iOS
     );
 
+    // Attempt to add the event to the calendar
     Add2Calendar.addEvent2Cal(event).then((value) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Maintenance scheduled successfully')),
@@ -226,13 +275,15 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
         SnackBar(content: Text('Error adding event: $error')),
       );
     });
-    print('Event Details: Title: $title, Start: $startDateTime, End: $endDateTime');
+
+    // Debugging info
+    print('Event Details: Title: $title, Start: $startDateTime, End: $endDateTime'); // Debugging info
   }
 
   DateTime _getNextMonday() {
-    DateTime now = DateTime.now();
-    int daysToAdd = (DateTime.monday - now.weekday + 7) % 7;
-    if (daysToAdd == 0) daysToAdd = 7; // If today is already Monday, go to next Monday
-    return now.add(Duration(days: daysToAdd));
+    DateTime now = DateTime.now(); // Get current date
+    int daysToAdd = (DateTime.monday - now.weekday + 7) % 7; // Calculate days until next Monday
+    if (daysToAdd == 0) daysToAdd = 7; // If today is already Monday, move to next Monday
+    return now.add(Duration(days: daysToAdd)); // Return the next Monday's date
   }
 }
