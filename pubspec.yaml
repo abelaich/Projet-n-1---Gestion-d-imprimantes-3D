@@ -30,7 +30,8 @@ environment:
 dependencies:
 
   # https://www.youtube.com/watch?v=CCAx57Mtzrc
-  add_2_calendar : any
+  # https://github.com/ja2375/add_2_calendar/blob/master/example/lib/main.dart
+  add_2_calendar: ^2.1.2
 
   flutter:
     sdk: flutter

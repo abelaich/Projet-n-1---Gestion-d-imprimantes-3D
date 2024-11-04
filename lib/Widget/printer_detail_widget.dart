@@ -7,6 +7,7 @@ import 'package:project_n1/presenter/stock_presenter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:project_n1/resources/app_colors.dart';
 
+
 class PrinterDetailWidget extends StatefulWidget {
   final Product product;
 
@@ -135,8 +136,8 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
                     builder: (BuildContext context, Widget? child) {
                       return Theme(
                         data: ThemeData.light().copyWith(
-                          primaryColor: AppColors.primaryColor, // Header color
-                          hintColor: AppColors.secondaryColor, // Selected color
+                          primaryColor: AppColors.primaryColor,
+                          hintColor: AppColors.secondaryColor,
                           colorScheme: const ColorScheme.light(primary: AppColors.primaryColor), // Light mode color scheme
                           buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary), // Button theme
                         ),
@@ -169,7 +170,9 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
                     PermissionStatus status = await _requestCalendarPermission();
 
                     if (status.isGranted) {
-                      scheduleMaintenance(context, widget.product);
+                      Add2Calendar.addEvent2Cal(
+                        buildEvent(),
+                      );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Calendar permission denied')),
@@ -250,35 +253,27 @@ class _PrinterDetailWidgetState extends State<PrinterDetailWidget> {
     return permission;
   }
 
-  void scheduleMaintenance(BuildContext context, Product product) {
-    DateTime nextMonday = _getNextMonday(); // Get the date of next Monday
-    // Set the time to 8 AM next Monday
-    DateTime startDateTime = DateTime(nextMonday.year, nextMonday.month, nextMonday.day, 8, 0);
-    DateTime endDateTime = startDateTime.add(const Duration(hours: 4)); // Set for four hour duration
+  Event buildEvent({Recurrence? recurrence}) {
+      DateTime nextMonday = _getNextMonday(); // Get the date of next Monday
 
-    String title = '${product.title} #${product.id}'; // Event title
-    final event = Event(
-      title: title,
-      description: 'Revision', // A reminder that this is important stuff
-      startDate: startDateTime,
-      endDate: endDateTime,
-      iosParams: const IOSParams(reminder: Duration(minutes: 40)), // Reminder for iOS
-    );
+      // Set the time to 8 AM next Monday
+      DateTime startDateTime = DateTime(nextMonday.year, nextMonday.month, nextMonday.day, 8, 0);
 
-    // Attempt to add the event to the calendar
-    Add2Calendar.addEvent2Cal(event).then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Maintenance scheduled successfully')),
+      String title = '${widget.product.title} #${widget.product.id}'; // Event title
+
+      print(title);
+      return Event(
+        title: title,
+        description: 'Revision',
+        location: 'Université de Rouen Normandie',
+        startDate: startDateTime,
+        endDate: startDateTime.add(const Duration(minutes: 240)),
+        allDay: false,
+        recurrence: recurrence,
       );
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error adding event: $error')),
-      );
-    });
+    }
 
-    // Debugging info
-    print('Event Details: Title: $title, Start: $startDateTime, End: $endDateTime'); // Debugging info
-  }
+
 
   DateTime _getNextMonday() {
     DateTime now = DateTime.now(); // Get current date
